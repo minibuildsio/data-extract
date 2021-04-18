@@ -2,14 +2,14 @@
 
 This project contains scripts to extract data from:
 
-- My Fitness Pal
+- MyFitnessPal
 - FitBit
 
 The intended use of these scripts is to extract data to be copied into a spreadsheet such as a health and fitness dashboard.
 
-## My Fitness Pal Extract
+## MyFitnessPal Extract
 
-The script `myfitnesspal-extract/mfp.py` reads nutrition data from My Fitness Pal.
+The script `myfitnesspal-extract/mfp.py` reads nutrition data from MyFitnessPal.
 
 ### Use
 
@@ -21,7 +21,7 @@ python mfp.py [start_date]
 
 ### Configuration
 
-Environment variables must be set up which contain your My Fitness Pal username and password:
+Environment variables must be set up which contain your MyFitnessPal username and password:
 
 ```yaml
 MYFITNESSPAL_USER
