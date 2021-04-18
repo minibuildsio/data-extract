@@ -5,19 +5,11 @@ import datetime as dt
 import argparse
 
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='Extract data from My Fitness Pal.')
 parser.add_argument(
     "start_date", help="The date to start the extract from (yyyy-mm-dd)", nargs='?')
 
 args = parser.parse_args()
-
-user = os.environ['MYFITNESSPAL_USER']
-password = os.environ['MYFITNESSPAL_PASSWORD']
-
-client = myfitnesspal.Client(user, password)
-
-heading = ['date', 'calories', 'carbs', 'fat', 'protein', 'sugar']
-print('\t'.join(heading))
 
 # create a list of dates from start date to yesterday (default to [yesterday] if no start date provided)
 yesterday = dt.datetime.today() - dt.timedelta(days=1)
@@ -35,6 +27,11 @@ else:
 
     for i in range(delta.days + 1):
         dates.append(start_date + dt.timedelta(days=i))
+
+client = myfitnesspal.Client(os.environ['MYFITNESSPAL_USER'], os.environ['MYFITNESSPAL_PASSWORD'])
+
+heading = ['date', 'calories', 'carbs', 'fat', 'protein', 'sugar']
+print('\t'.join(heading))
 
 # extract nutrition data for the requested dates
 for date in dates:
