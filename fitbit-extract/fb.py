@@ -12,18 +12,15 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-heading = ['date', 'calories', 'carbs', 'fat', 'protein', 'sugar']
-print('\t'.join(heading))
-
 # create a list of dates from start date to yesterday (default to [yesterday] if no start date provided)
 yesterday = dt.datetime.today() - dt.timedelta(days=1)
 
 if args.start_date is None:
-    dates = [yesterday]
+    dates = list(reversed(list(map(lambda x: yesterday - dt.timedelta(days=x), range(7)))))
 else:
     start_date = dt.datetime.strptime(args.start_date, '%Y-%m-%d')
     if start_date > yesterday:
-        raise 'Start date must be before yesterday'
+        raise Exception('Start date must be before yesterday')
 
     delta = yesterday - start_date
 
@@ -41,9 +38,6 @@ server.browser_authorize()
 access_token = str(server.fitbit.client.session.token['access_token'])
 refresh_token = str(server.fitbit.client.session.token['refresh_token'])
 
-print(access_token)
-print(refresh_token)
-
 client = fitbit.Fitbit(client_id, client_secret, oauth2=True, 
                        access_token=access_token, refresh_token=refresh_token)
 
@@ -60,3 +54,42 @@ for date in dates:
     ]
 
     print('\t'.join(map(str, data)))
+
+print()
+
+heading = ['date', 'calories', 'carbs', 'fat', 'protein', 'fiber']
+print('\t'.join(heading))
+
+for date in dates:
+    food_log = client.foods_log(date=date.strftime('%Y-%m-%d'))['summary']
+
+    food_data = [
+        date.strftime('%Y-%m-%d'),
+        food_log['calories'] if 'calories' in food_log else '-',
+        food_log['carbs'] if 'carbs' in food_log else '-',
+        food_log['fat'] if 'fat' in food_log else '-',
+        food_log['protein'] if 'protein' in food_log else '-',
+        food_log['fiber'] if 'fiber' in food_log else '-',
+    ]
+
+    print('\t'.join(map(str, food_data)))
+
+print()
+
+heading = ['date', 'total_asleep', 'total_in_bed', 'deep', 'light', 'rem', 'wake']
+print('\t'.join(heading))
+
+for date in dates:
+    sleep_log = client.sleep(date=date.strftime('%Y-%m-%d'))['summary']
+
+    sleep_data = [
+        date.strftime('%Y-%m-%d'),
+        sleep_log['totalMinutesAsleep'],
+        sleep_log['totalTimeInBed'],
+        sleep_log['stages']['deep'],
+        sleep_log['stages']['light'],
+        sleep_log['stages']['rem'],
+        sleep_log['stages']['wake'],
+    ]
+
+    print('\t'.join(map(str, sleep_data)))
